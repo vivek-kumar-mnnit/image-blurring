@@ -1,0 +1,17 @@
+module convolution (
+    input clk,
+    input [7:0] image_pixel [0:8],
+    input [7:0] gaussian_mask [0:8],
+    output reg [15:0] result
+);
+    reg [15:0] sum;
+
+    always @(posedge clk) begin
+        sum = 0;
+        // Perform element-wise multiplication and accumulation
+        sum = image_pixel[0] * gaussian_mask[0] + image_pixel[1] * gaussian_mask[1] + image_pixel[2] * gaussian_mask[2] +
+              image_pixel[3] * gaussian_mask[3] + image_pixel[4] * gaussian_mask[4] + image_pixel[5] * gaussian_mask[5] +
+              image_pixel[6] * gaussian_mask[6] + image_pixel[7] * gaussian_mask[7] + image_pixel[8] * gaussian_mask[8];
+        result = sum;
+    end
+endmodule
