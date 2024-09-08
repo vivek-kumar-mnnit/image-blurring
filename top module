@@ -1,0 +1,44 @@
+module image_filter_top (
+    input clk, rst,
+    output [15:0] filtered_pixel
+);
+    wire [7:0] image_pixel [0:8];
+    wire [7:0] gaussian_mask [0:8];
+    wire [15:0] conv_result;
+    wire we;
+    wire [9:0] addr_image, addr_mask;
+
+    bram #(.DATA_WIDTH(8), .ADDR_WIDTH(10)) bram1 (
+        .clk(clk),
+        .we(1'b0),
+        .addr(addr_mask),
+        .din(8'b0),
+        .dout(gaussian_mask)
+    );
+
+    bram #(.DATA_WIDTH(8), .ADDR_WIDTH(10)) bram2 (
+        .clk(clk),
+        .we(1'b0),
+        .addr(addr_image),
+        .din(8'b0),
+        .dout(image_pixel)
+    );
+
+    control_unit ctrl (
+        .clk(clk),
+        .rst(rst),
+        .addr_image(addr_image),
+        .addr_mask(addr_mask),
+        .we(we)
+    );
+
+    convolution conv (
+        .clk(clk),
+        .image_pixel(image_pixel),
+        .gaussian_mask(gaussian_mask),
+        .result(conv_result)
+    );
+
+    assign filtered_pixel = conv_result;
+
+endmodule
